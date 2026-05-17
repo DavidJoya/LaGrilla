@@ -1,0 +1,225 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(180deg, var(--crowd-shadow) 0%, rgba(0, 8, 20, 0.98) 100%);
+  border-bottom: 3px solid var(--floodlight);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.8),
+    inset 0 -1px 0 rgba(255, 215, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.logo-section {
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.logo-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+  animation: ballBounce 2s ease-in-out infinite;
+}
+
+@keyframes ballBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.logo-main {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--floodlight);
+  line-height: 1;
+  text-shadow: 
+    0 0 20px rgba(255, 215, 0, 0.8),
+    0 0 40px rgba(255, 215, 0, 0.4),
+    2px 2px 4px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.1em;
+}
+
+.logo-sub {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding-left: 0.25rem;
+}
+
+.main-nav {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.nav-link:hover::before {
+  left: 100%;
+}
+
+.nav-link:hover {
+  color: var(--floodlight);
+  border-color: var(--floodlight);
+  background: rgba(255, 215, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.nav-link.active {
+  color: var(--chalk-white);
+  background: var(--scoreboard-red);
+  border-color: var(--scoreboard-red);
+  box-shadow: 
+    0 4px 15px rgba(230, 57, 70, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.nav-link-exit {
+  background: rgba(230, 57, 70, 0.2);
+  border-color: var(--scoreboard-red);
+  color: var(--scoreboard-red);
+}
+
+.nav-link-exit:hover {
+  background: var(--scoreboard-red);
+  color: var(--chalk-white);
+}
+
+.nav-icon {
+  font-size: 1.25rem;
+}
+
+.scoreboard-lights {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0.5rem 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.light {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--floodlight);
+  box-shadow: 
+    0 0 10px var(--floodlight),
+    0 0 20px var(--floodlight);
+  animation: lightBlink 3s ease-in-out infinite;
+}
+
+.light:nth-child(2) {
+  animation-delay: 0.6s;
+}
+
+.light:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+.light:nth-child(4) {
+  animation-delay: 1.8s;
+}
+
+.light:nth-child(5) {
+  animation-delay: 2.4s;
+}
+
+@keyframes lightBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .header-container {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .main-nav {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-main {
+    font-size: 2rem;
+  }
+
+  .nav-link {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.85rem;
+  }
+
+  .nav-link span:not(.nav-icon) {
+    display: none;
+  }
+
+  .nav-icon {
+    font-size: 1.5rem;
+  }
+
+  .scoreboard-lights {
+    gap: 1rem;
+  }
+}

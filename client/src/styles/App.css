@@ -1,0 +1,283 @@
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Rajdhani:wght@400;600;700&display=swap');
+
+:root {
+  /* Stadium Color Palette */
+  --pitch-green: #0d3b1a;
+  --grass-dark: #072410;
+  --grass-light: #145c2a;
+  --floodlight: #ffd700;
+  --scoreboard-red: #e63946;
+  --scoreboard-green: #06d6a0;
+  --chalk-white: #f8f9fa;
+  --crowd-shadow: #000814;
+  --concrete-gray: #2b2d42;
+  --highlight-yellow: #fcbf49;
+  
+  /* Typography */
+  --font-display: 'Teko', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+  
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  
+  /* Borders */
+  --border-radius: 4px;
+  --border-thick: 3px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background: linear-gradient(135deg, var(--grass-dark) 0%, var(--pitch-green) 50%, var(--grass-light) 100%);
+  background-attachment: fixed;
+  color: var(--chalk-white);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Stadium floodlight effect */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 215, 0, 0.15) 0%,
+    rgba(255, 215, 0, 0.05) 30%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 0;
+  animation: floodlightPulse 8s ease-in-out infinite;
+}
+
+@keyframes floodlightPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Grass texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.02) 0px,
+      transparent 2px,
+      transparent 4px,
+      rgba(255, 255, 255, 0.02) 6px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.01) 0px,
+      transparent 1px,
+      transparent 2px,
+      rgba(255, 255, 255, 0.01) 3px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+h1 {
+  font-size: 3.5rem;
+  line-height: 1;
+  color: var(--floodlight);
+  text-shadow: 
+    0 0 20px rgba(255, 215, 0, 0.5),
+    0 0 40px rgba(255, 215, 0, 0.3),
+    2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+h2 {
+  font-size: 2.5rem;
+  line-height: 1.1;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+button {
+  font-family: var(--font-body);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+input, select, textarea {
+  font-family: var(--font-body);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--grass-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--concrete-gray);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--highlight-yellow);
+}
+
+/* Utility classes */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}
+
+.card {
+  background: rgba(43, 45, 66, 0.95);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--scoreboard-red) 0%, #c1121f 100%);
+  color: var(--chalk-white);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius);
+  font-size: 1.1rem;
+  box-shadow: 
+    0 4px 15px rgba(230, 57, 70, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(230, 57, 70, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, var(--concrete-gray) 0%, #1d1e30 100%);
+  color: var(--chalk-white);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #363854 0%, #2b2d42 100%);
+  border-color: var(--floodlight);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-pending {
+  background: rgba(252, 191, 73, 0.2);
+  color: var(--highlight-yellow);
+  border: 1px solid var(--highlight-yellow);
+}
+
+.badge-paid {
+  background: rgba(6, 214, 160, 0.2);
+  color: var(--scoreboard-green);
+  border: 1px solid var(--scoreboard-green);
+}
+
+.badge-active {
+  background: rgba(6, 214, 160, 0.2);
+  color: var(--scoreboard-green);
+  border: 1px solid var(--scoreboard-green);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Loading animation */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 215, 0, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--floodlight);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+  
+  h2 {
+    font-size: 2rem;
+  }
+  
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .card {
+    padding: var(--spacing-md);
+  }
+}

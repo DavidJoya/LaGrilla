@@ -81,11 +81,14 @@ const AdminMatchdays = () => {
     }
 
     try {
+      // Convertir fecha local a UTC manteniendo la hora que el usuario ingresó
+      const localDate = new Date(matchDate);
+      
       await adminAPI.createMatch({
         matchdayId: selectedMatchday.id,
         homeTeam,
         awayTeam,
-        matchDate
+        matchDate: localDate.toISOString()
       });
       
       alert('¡Partido agregado exitosamente!');
@@ -117,6 +120,32 @@ const AdminMatchdays = () => {
     }
   };
 
+  const handleDeleteMatch = async (matchId) => {
+    if (!window.confirm('¿Estás seguro de eliminar este partido? Esta acción no se puede deshacer.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://la-grilla-api.onrender.com/api/admin/match/${matchId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${btoa('admin:admin123456')}`
+        },
+      });
+
+      if (response.ok) {
+        alert('Partido eliminado exitosamente');
+        handleSelectMatchday(selectedMatchday);
+      } else {
+        alert('Error al eliminar partido');
+      }
+    } catch (error) {
+      console.error('Error deleting match:', error);
+      alert('Error al eliminar partido');
+    }
+  };
+
   const handleUpdateStatus = async (matchdayId, newStatus) => {
     try {
       await adminAPI.updateMatchdayStatus(matchdayId, newStatus);
@@ -126,6 +155,18 @@ const AdminMatchdays = () => {
       console.error('Error updating status:', error);
       alert('Error al actualizar estado');
     }
+  };
+
+  const formatDateForDisplay = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('es-MX', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
   };
 
   if (loading) {
@@ -271,7 +312,7 @@ const AdminMatchdays = () => {
                   <tbody>
                     {matches.map((match) => (
                       <tr key={match.id}>
-                        <td>{new Date(match.match_date).toLocaleString('es-MX')}</td>
+                        <td>{formatDateForDisplay(match.match_date)}</td>
                         <td>{match.home_team}</td>
                         <td>{match.away_team}</td>
                         <td>
@@ -282,28 +323,38 @@ const AdminMatchdays = () => {
                           )}
                         </td>
                         <td>
-                          <div className="result-form">
-                            <input
-                              type="number"
-                              min="0"
-                              placeholder="L"
-                              className="result-input"
-                              onChange={(e) => setHomeGoals(e.target.value)}
-                            />
-                            <span>-</span>
-                            <input
-                              type="number"
-                              min="0"
-                              placeholder="V"
-                              className="result-input"
-                              onChange={(e) => setAwayGoals(e.target.value)}
-                            />
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', justifyContent: 'center' }}>
                             <button
-                              onClick={() => handleUpdateResult(match.id)}
-                              className="btn-primary btn-small"
+                              onClick={() => handleDeleteMatch(match.id)}
+                              className="btn-secondary btn-small"
+                              title="Eliminar partido"
                             >
-                              💾
+                              🗑️
                             </button>
+                            <div className="result-form">
+                              <input
+                                type="number"
+                                min="0"
+                                placeholder="L"
+                                className="result-input"
+                                onChange={(e) => setHomeGoals(e.target.value)}
+                              />
+                              <span>-</span>
+                              <input
+                                type="number"
+                                min="0"
+                                placeholder="V"
+                                className="result-input"
+                                onChange={(e) => setAwayGoals(e.target.value)}
+                              />
+                              <button
+                                onClick={() => handleUpdateResult(match.id)}
+                                className="btn-primary btn-small"
+                                title="Guardar resultado"
+                              >
+                                💾
+                              </button>
+                            </div>
                           </div>
                         </td>
                       </tr>

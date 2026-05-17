@@ -1,0 +1,170 @@
+.admin-matchdays-page {
+  min-height: 100vh;
+  padding: var(--spacing-lg) 0;
+}
+
+.form-card {
+  margin-bottom: var(--spacing-xl);
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.matchdays-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.matchday-card {
+  transition: all 0.3s ease;
+}
+
+.matchday-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--floodlight);
+}
+
+.matchday-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.matchday-header h3 {
+  color: var(--floodlight);
+  margin: 0;
+}
+
+.matchday-info {
+  margin-bottom: var(--spacing-md);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.matchday-info p {
+  margin: 0.5rem 0;
+}
+
+.matchday-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.status-select {
+  flex: 1;
+  padding: var(--spacing-sm);
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  border-radius: var(--border-radius);
+  color: var(--chalk-white);
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+
+.matches-section {
+  margin-top: var(--spacing-xl);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.add-match-form {
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-lg);
+}
+
+.match-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr auto;
+  gap: var(--spacing-sm);
+  align-items: end;
+}
+
+.matches-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--spacing-md);
+}
+
+.matches-table thead {
+  background: linear-gradient(180deg, var(--concrete-gray) 0%, rgba(43, 45, 66, 0.95) 100%);
+  border-bottom: 2px solid var(--floodlight);
+}
+
+.matches-table th {
+  padding: var(--spacing-md);
+  text-align: left;
+  color: var(--floodlight);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+}
+
+.matches-table td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.result-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.result-input {
+  width: 50px;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  border-radius: var(--border-radius);
+  color: var(--chalk-white);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.empty-text {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  padding: var(--spacing-xl);
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .matchdays-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .match-form {
+    grid-template-columns: 1fr;
+  }
+
+  .matches-table {
+    font-size: 0.875rem;
+  }
+
+  .matches-table th,
+  .matches-table td {
+    padding: var(--spacing-sm);
+  }
+}

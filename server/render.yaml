@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: la-grilla-api
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD_HASH
+        value: $2a$10$8wv5p.Yd5QYqF5w5r5KjJeVF1Qf5L5p5L5p5L5p5L5p5L5p5L5
+
+databases:
+  - name: la-grilla-db
+    databaseName: la_grilla
+    user: la_grilla_user

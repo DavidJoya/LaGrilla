@@ -56,6 +56,36 @@ router.post('/match/create', async (req, res) => {
   }
 });
 
+// Delete match
+router.delete('/match/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      'DELETE FROM matches WHERE id = $1 RETURNING *',
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Match not found' 
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Match deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting match:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to delete match' 
+    });
+  }
+});
+
 // Get all matchdays
 router.get('/matchdays', async (req, res) => {
   try {

@@ -190,10 +190,27 @@ router.get('/pool/status/:id', async (req, res) => {
   }
 });
 
-// FR-06: Get matchday board (paid entries only)
+// FR-06: Get matchday board (paid entries only) - UPDATED: Show only In_Progress and Finished
 router.get('/matchday/:id/board', async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Check if matchday is In_Progress or Finished
+    const matchdayCheck = await pool.query(
+      `SELECT * FROM matchdays WHERE id = $1 AND status IN ('In_Progress', 'Finished')`,
+      [id]
+    );
+
+    if (matchdayCheck.rows.length === 0) {
+      return res.json({
+        success: true,
+        board: [],
+        matchday: null,
+        message: 'Board not available yet'
+      });
+    }
+
+    const matchday = matchdayCheck.rows[0];
 
     const result = await pool.query(
       `SELECT 
@@ -221,6 +238,7 @@ router.get('/matchday/:id/board', async (req, res) => {
 
     res.json({
       success: true,
+      matchday,
       board: result.rows
     });
   } catch (error) {

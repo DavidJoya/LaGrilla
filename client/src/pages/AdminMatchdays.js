@@ -247,11 +247,11 @@ const AdminMatchdays = () => {
                   onChange={(e) => handleUpdateStatus(matchday.id, e.target.value)}
                   className="status-select"
                 >
-                 <option value="Inactive">Inactiva</option>
-                 <option value="Active">Activa</option>
-                 <option value="In_Progress">En Curso</option>
-                 <option value="Finished">Finalizada</option>
-               </select>
+                  <option value="Inactive">Inactiva</option>
+                  <option value="Active">Activa</option>
+                  <option value="In_Progress">En Curso</option>
+                  <option value="Finished">Finalizada</option>
+                </select>
               </div>
             </div>
           ))}

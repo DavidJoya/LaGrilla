@@ -14,16 +14,27 @@ const Board = () => {
   const loadBoard = async () => {
     try {
       setLoading(true);
-      const matchdayData = await publicAPI.getCurrentMatchday();
       
-      if (!matchdayData.matchday) {
+      // Get current matchday first
+      const currentData = await publicAPI.getCurrentMatchday();
+      
+      if (!currentData.matchday) {
+        setLoading(false);
         return;
       }
 
-      setMatchday(matchdayData.matchday);
+      // Try to load board for current matchday
+      const boardData = await publicAPI.getMatchdayBoard(currentData.matchday.id);
       
-      const boardData = await publicAPI.getMatchdayBoard(matchdayData.matchday.id);
-      setBoard(boardData.board || []);
+      if (boardData.matchday) {
+        // Board is available (matchday is In_Progress or Finished)
+        setMatchday(boardData.matchday);
+        setBoard(boardData.board || []);
+      } else {
+        // Board not available yet (matchday is still Active or Inactive)
+        setMatchday(currentData.matchday);
+        setBoard([]);
+      }
     } catch (error) {
       console.error('Error loading board:', error);
     } finally {
@@ -62,8 +73,28 @@ const Board = () => {
         <div className="container">
           <div className="empty-state card">
             <p className="empty-icon">🏟️</p>
-            <h3>No hay jornada activa</h3>
-            <p className="empty-text">El tablero estará disponible cuando haya una jornada en curso</p>
+            <h3>No hay jornada disponible</h3>
+            <p className="empty-text">El tablero estará disponible cuando haya una jornada activa</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if matchday is not In_Progress or Finished yet
+  if (matchday.status === 'Active' || matchday.status === 'Inactive') {
+    return (
+      <div className="board-page">
+        <div className="container">
+          <div className="empty-state card">
+            <p className="empty-icon">⏳</p>
+            <h3>Tablero No Disponible</h3>
+            <p className="empty-text">
+              {matchday.name}
+            </p>
+            <p className="empty-text">
+              El tablero se mostrará cuando el administrador cambie la jornada a "En Curso"
+            </p>
           </div>
         </div>
       </div>
@@ -76,9 +107,9 @@ const Board = () => {
         <div className="page-header">
           <h1>Tablero de Jornada</h1>
           <p className="page-subtitle">{matchday.name}</p>
-          <span className={`badge badge-${matchday.status.toLowerCase()}`}>
-            {matchday.status === 'Active' ? 'Activa' : 
-             matchday.status === 'In_Progress' ? 'En Curso' : 'Finalizada'}
+          <span className={`badge badge-${matchday.status.toLowerCase().replace('_', '-')}`}>
+            {matchday.status === 'In_Progress' ? 'En Curso' : 
+             matchday.status === 'Finished' ? 'Finalizada' : matchday.status}
           </span>
         </div>
 

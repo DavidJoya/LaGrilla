@@ -1,102 +1,152 @@
-import axios from 'axios';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:10000/api';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+// Helper to get auth header
+const getAuthHeader = () => {
+  const authToken = localStorage.getItem('admin_auth_token');
+  if (authToken) {
+    return { 'Authorization': `Basic ${authToken}` };
+  }
+  return {};
+};
 
 // Public API calls
 export const publicAPI = {
   getCurrentMatchday: async () => {
-    const response = await api.get('/public/matchday/current');
-    return response.data;
+    const response = await fetch(`${API_BASE_URL}/matchday/current`);
+    return response.json();
   },
 
   createPoolEntry: async (entryData) => {
-    const response = await api.post('/public/pool/create', entryData);
-    return response.data;
+    const response = await fetch(`${API_BASE_URL}/pool/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(entryData),
+    });
+    return response.json();
   },
 
-  checkPoolStatus: async (id) => {
-    const response = await api.get(`/public/pool/status/${id}`);
-    return response.data;
+  checkPoolStatus: async (uniqueId) => {
+    const response = await fetch(`${API_BASE_URL}/pool/status/${uniqueId}`);
+    return response.json();
   },
 
   getMatchdayBoard: async (matchdayId) => {
-    const response = await api.get(`/public/matchday/${matchdayId}/board`);
-    return response.data;
+    const response = await fetch(`${API_BASE_URL}/matchday/${matchdayId}/board`);
+    return response.json();
   },
 
   getOverallStandings: async () => {
-    const response = await api.get('/public/standings/overall');
-    return response.data;
+    const response = await fetch(`${API_BASE_URL}/standings/overall`);
+    return response.json();
   },
 };
 
-// Admin API calls (requires authentication)
+// Admin API calls with auth
 export const adminAPI = {
-  setAuthHeader: (username, password) => {
-    const token = btoa(`${username}:${password}`);
-    api.defaults.headers.common['Authorization'] = `Basic ${token}`;
+  login: async (username, password) => {
+    const credentials = btoa(`${username}:${password}`);
+    const response = await fetch(`${API_BASE_URL}/admin/matchdays`, {
+      headers: {
+        'Authorization': `Basic ${credentials}`,
+      },
+    });
+
+    if (response.ok) {
+      // Save credentials in localStorage
+      localStorage.setItem('admin_auth_token', credentials);
+      return { success: true };
+    } else {
+      return { success: false, error: 'Invalid credentials' };
+    }
   },
 
-  clearAuthHeader: () => {
-    delete api.defaults.headers.common['Authorization'];
+  logout: () => {
+    localStorage.removeItem('admin_auth_token');
   },
 
-  createMatchday: async (data) => {
-    const response = await api.post('/admin/matchday/create', data);
-    return response.data;
-  },
-
-  createMatch: async (data) => {
-    const response = await api.post('/admin/match/create', data);
-    return response.data;
+  isAuthenticated: () => {
+    return !!localStorage.getItem('admin_auth_token');
   },
 
   getMatchdays: async () => {
-    const response = await api.get('/admin/matchdays');
-    return response.data;
-  },
-
-  getPendingEntries: async () => {
-    const response = await api.get('/admin/pools/pending');
-    return response.data;
-  },
-
-  markEntryAsPaid: async (id) => {
-    const response = await api.put(`/admin/pool/${id}/mark-paid`);
-    return response.data;
-  },
-
-  cleanupPendingEntries: async (matchdayId) => {
-    const response = await api.delete(`/admin/matchday/${matchdayId}/cleanup-pending`);
-    return response.data;
-  },
-
-  updateMatchResult: async (matchId, homeGoals, awayGoals) => {
-    const response = await api.put(`/admin/match/${matchId}/result`, {
-      homeGoals,
-      awayGoals,
+    const response = await fetch(`${API_BASE_URL}/admin/matchdays`, {
+      headers: getAuthHeader(),
     });
-    return response.data;
+    return response.json();
   },
 
-  updateMatchdayStatus: async (matchdayId, status) => {
-    const response = await api.put(`/admin/matchday/${matchdayId}/status`, {
-      status,
+  createMatchday: async (matchdayData) => {
+    const response = await fetch(`${API_BASE_URL}/admin/matchday/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader(),
+      },
+      body: JSON.stringify(matchdayData),
     });
-    return response.data;
+    return response.json();
+  },
+
+  createMatch: async (matchData) => {
+    const response = await fetch(`${API_BASE_URL}/admin/match/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader(),
+      },
+      body: JSON.stringify(matchData),
+    });
+    return response.json();
   },
 
   getMatchdayMatches: async (matchdayId) => {
-    const response = await api.get(`/admin/matchday/${matchdayId}/matches`);
-    return response.data;
+    const response = await fetch(`${API_BASE_URL}/admin/matchday/${matchdayId}/matches`, {
+      headers: getAuthHeader(),
+    });
+    return response.json();
+  },
+
+  updateMatchResult: async (matchId, homeGoals, awayGoals) => {
+    const response = await fetch(`${API_BASE_URL}/admin/match/${matchId}/result`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader(),
+      },
+      body: JSON.stringify({ homeGoals, awayGoals }),
+    });
+    return response.json();
+  },
+
+  updateMatchdayStatus: async (matchdayId, status) => {
+    const response = await fetch(`${API_BASE_URL}/admin/matchday/${matchdayId}/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader(),
+      },
+      body: JSON.stringify({ status }),
+    });
+    return response.json();
+  },
+
+  getPendingEntries: async () => {
+    const response = await fetch(`${API_BASE_URL}/admin/pools/pending`, {
+      headers: getAuthHeader(),
+    });
+    return response.json();
+  },
+
+  markEntryAsPaid: async (uniqueId) => {
+    const response = await fetch(`${API_BASE_URL}/admin/pool/${uniqueId}/mark-paid`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader(),
+      },
+    });
+    return response.json();
   },
 };
-
-export default api;

@@ -1,60 +1,108 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminAPI } from '../utils/api';
 import './Admin.css';
 
 const Admin = () => {
-  const navigate = useNavigate();
-  const [authenticated, setAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if already authenticated
+    if (adminAPI.isAuthenticated()) {
+      // User is already logged in, could redirect to dashboard
+      // For now we just show the dashboard
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
-      // Set auth header
-      adminAPI.setAuthHeader(username, password);
-
-      // Test authentication by fetching matchdays
-      await adminAPI.getMatchdays();
-
-      // If successful, mark as authenticated
-      setAuthenticated(true);
-      localStorage.setItem('admin_auth', 'true');
+      const result = await adminAPI.login(username, password);
+      
+      if (result.success) {
+        // Login successful, page will show dashboard
+        window.location.reload(); // Reload to show authenticated state
+      } else {
+        setError('Credenciales inválidas');
+      }
     } catch (err) {
-      setError('Credenciales inválidas');
-      adminAPI.clearAuthHeader();
-      localStorage.removeItem('admin_auth');
+      console.error('Login error:', err);
+      setError('Error al iniciar sesión');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleLogout = () => {
-    adminAPI.clearAuthHeader();
-    localStorage.removeItem('admin_auth');
-    setAuthenticated(false);
-    setUsername('');
-    setPassword('');
-    navigate('/');
+    adminAPI.logout();
+    window.location.reload();
   };
 
-  // Check if previously authenticated
-  React.useEffect(() => {
-    if (localStorage.getItem('admin_auth') === 'true') {
-      setAuthenticated(true);
-    }
-  }, []);
+  const handleNavigate = (path) => {
+    navigate(path);
+  };
 
-  if (!authenticated) {
+  // If authenticated, show dashboard
+  if (adminAPI.isAuthenticated()) {
     return (
       <div className="admin-page">
         <div className="container">
-          <div className="login-card card">
-            <h2>Panel de Administración</h2>
-            <p className="login-subtitle">Acceso restringido</p>
+          <div className="admin-header">
+            <h1>PANEL DE ADMINISTRACIÓN</h1>
+            <button onClick={handleLogout} className="btn-logout">
+              🚪 CERRAR SESIÓN
+            </button>
+          </div>
 
+          <div className="admin-grid">
+            <div className="admin-card" onClick={() => handleNavigate('/admin/matchdays')}>
+              <div className="card-icon">📅</div>
+              <h3>GESTIONAR JORNADAS</h3>
+              <p>Crear jornadas, agregar partidos y configurar horarios</p>
+              <button className="card-button">IR →</button>
+            </div>
+
+            <div className="admin-card" onClick={() => handleNavigate('/admin/payments')}>
+              <div className="card-icon">💰</div>
+              <h3>VALIDAR PAGOS</h3>
+              <p>Revisar y confirmar pagos de participantes</p>
+              <button className="card-button">IR →</button>
+            </div>
+
+            <div className="admin-card disabled">
+              <div className="card-icon">📊</div>
+              <h3>ESTADÍSTICAS</h3>
+              <p>Ver reportes y análisis de participación</p>
+              <button className="card-button">PRÓXIMAMENTE</button>
+            </div>
+
+            <div className="admin-card disabled">
+              <div className="card-icon">⚙️</div>
+              <h3>CONFIGURACIÓN</h3>
+              <p>Ajustes generales del sistema</p>
+              <button className="card-button">PRÓXIMAMENTE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If not authenticated, show login form
+  return (
+    <div className="admin-page">
+      <div className="container">
+        <div className="login-container card">
+          <h1>PANEL DE ADMINISTRACIÓN</h1>
+          
+          <form onSubmit={handleLogin} className="login-form">
             {error && (
               <div className="error-message">
                 <span className="error-icon">⚠️</span>
@@ -62,103 +110,38 @@ const Admin = () => {
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="login-form">
-              <div className="form-group">
-                <label htmlFor="username">Usuario</label>
-                <input
-                  type="text"
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="form-input"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="password">Contraseña</label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="form-input"
-                  required
-                />
-              </div>
-
-              <button type="submit" className="btn-primary btn-large">
-                🔐 Iniciar Sesión
-              </button>
-
-              <p className="login-hint">
-                Credenciales por defecto: admin / admin123
-              </p>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="admin-page">
-      <div className="container">
-        <div className="page-header">
-          <h1>Panel de Administración</h1>
-          <button onClick={handleLogout} className="btn-secondary">
-            🚪 Cerrar Sesión
-          </button>
-        </div>
-
-        <div className="admin-grid">
-          <div className="admin-card card" onClick={() => navigate('/admin/matchdays')}>
-            <div className="card-icon">📅</div>
-            <h3>Gestionar Jornadas</h3>
-            <p>Crear jornadas, agregar partidos y configurar horarios</p>
-            <div className="card-action">Ir →</div>
-          </div>
-
-          <div className="admin-card card" onClick={() => navigate('/admin/payments')}>
-            <div className="card-icon">💰</div>
-            <h3>Validar Pagos</h3>
-            <p>Revisar y confirmar pagos de participantes</p>
-            <div className="card-action">Ir →</div>
-          </div>
-
-          <div className="admin-card card">
-            <div className="card-icon">📊</div>
-            <h3>Estadísticas</h3>
-            <p>Ver reportes y análisis de participación</p>
-            <div className="card-action">Próximamente</div>
-          </div>
-
-          <div className="admin-card card">
-            <div className="card-icon">⚙️</div>
-            <h3>Configuración</h3>
-            <p>Ajustes generales del sistema</p>
-            <div className="card-action">Próximamente</div>
-          </div>
-        </div>
-
-        <div className="quick-info card">
-          <h3>Información del Sistema</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <div className="info-label">Versión</div>
-              <div className="info-value">1.0.0</div>
+            <div className="form-group">
+              <label>USUARIO</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Ingresa tu usuario"
+                className="form-input"
+                disabled={loading}
+              />
             </div>
-            <div className="info-item">
-              <div className="info-label">Estado</div>
-              <div className="info-value">
-                <span className="badge badge-active">Operativo</span>
-              </div>
+
+            <div className="form-group">
+              <label>CONTRASEÑA</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Ingresa tu contraseña"
+                className="form-input"
+                disabled={loading}
+              />
             </div>
-            <div className="info-item">
-              <div className="info-label">Base de Datos</div>
-              <div className="info-value">PostgreSQL</div>
-            </div>
-          </div>
+
+            <button 
+              type="submit" 
+              className="btn-primary btn-login"
+              disabled={loading}
+            >
+              {loading ? 'INICIANDO...' : 'INICIAR SESIÓN'}
+            </button>
+          </form>
         </div>
       </div>
     </div>

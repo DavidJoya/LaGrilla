@@ -3,164 +3,52 @@
   padding: var(--spacing-lg) 0;
 }
 
-.login-container {
+.login-card {
   max-width: 500px;
-  margin: 0 auto;
+  margin: var(--spacing-xl) auto;
   text-align: center;
 }
 
-.login-container h1 {
+.login-card h2 {
   color: var(--floodlight);
+  margin-bottom: var(--spacing-sm);
+}
+
+.login-subtitle {
+  color: rgba(255, 255, 255, 0.7);
   margin-bottom: var(--spacing-xl);
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  font-size: 1.1rem;
 }
 
 .login-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
 }
 
-.error-message {
-  background: rgba(220, 38, 38, 0.1);
-  border: 2px solid rgba(220, 38, 38, 0.5);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-md);
-  color: #fca5a5;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.error-icon {
-  font-size: 1.5rem;
-}
-
-.form-group {
-  text-align: left;
-}
-
-.form-group label {
-  display: block;
-  color: var(--floodlight);
-  font-weight: 700;
-  margin-bottom: var(--spacing-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 0.875rem;
-}
-
-.form-input {
-  width: 100%;
-  padding: var(--spacing-md);
-  background: rgba(0, 0, 0, 0.4);
-  border: 2px solid rgba(255, 215, 0, 0.3);
-  border-radius: var(--border-radius);
-  color: var(--chalk-white);
-  font-family: var(--font-body);
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--floodlight);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-}
-
-.form-input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-login {
-  padding: var(--spacing-md) var(--spacing-xl);
-  font-size: 1.125rem;
+.login-hint {
   margin-top: var(--spacing-md);
-}
-
-/* Dashboard Styles */
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-xl);
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-}
-
-.admin-header h1 {
-  color: var(--floodlight);
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-}
-
-.btn-logout {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: rgba(220, 38, 38, 0.2);
-  border: 2px solid rgba(220, 38, 38, 0.5);
-  border-radius: var(--border-radius);
-  color: #fca5a5;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-logout:hover {
-  background: rgba(220, 38, 38, 0.3);
-  border-color: rgba(220, 38, 38, 0.8);
-  transform: translateY(-2px);
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
 }
 
 .admin-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
 }
 
 .admin-card {
-  background: linear-gradient(135deg, var(--concrete-gray) 0%, rgba(43, 45, 66, 0.95) 100%);
-  border: 2px solid rgba(255, 215, 0, 0.3);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-xl);
-  text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-align: center;
   position: relative;
-  overflow: hidden;
-}
-
-.admin-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
-  transition: left 0.5s ease;
-}
-
-.admin-card:hover::before {
-  left: 100%;
 }
 
 .admin-card:hover {
-  border-color: var(--floodlight);
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
-              0 0 30px rgba(255, 215, 0, 0.2);
-}
-
-.admin-card.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.admin-card.disabled:hover {
-  transform: none;
-  border-color: rgba(255, 215, 0, 0.3);
+  border-color: var(--floodlight);
+  box-shadow: 0 12px 40px rgba(255, 215, 0, 0.3);
 }
 
 .card-icon {
@@ -171,56 +59,78 @@
 
 .admin-card h3 {
   color: var(--floodlight);
+  margin-bottom: var(--spacing-sm);
   font-size: 1.5rem;
-  margin-bottom: var(--spacing-md);
-  font-weight: 700;
 }
 
 .admin-card p {
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: var(--spacing-lg);
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: var(--spacing-md);
   line-height: 1.6;
 }
 
-.card-button {
+.card-action {
   display: inline-block;
   padding: var(--spacing-sm) var(--spacing-lg);
   background: rgba(255, 215, 0, 0.1);
-  border: 2px solid var(--floodlight);
-  border-radius: var(--border-radius);
+  border: 1px solid var(--floodlight);
+  border-radius: 20px;
   color: var(--floodlight);
-  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
   transition: all 0.3s ease;
 }
 
-.admin-card:hover .card-button {
+.admin-card:hover .card-action {
   background: var(--floodlight);
-  color: var(--pitch-green);
-  transform: scale(1.05);
+  color: var(--crowd-shadow);
 }
 
-.admin-card.disabled .card-button {
-  opacity: 0.5;
+.quick-info {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
+.quick-info h3 {
+  color: var(--floodlight);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.info-item {
+  text-align: center;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+}
+
+.info-value {
+  font-size: 1.25rem;
+  color: var(--chalk-white);
+  font-weight: 700;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .admin-header {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .admin-header h1 {
-    font-size: 2rem;
-  }
-
   .admin-grid {
     grid-template-columns: 1fr;
   }
 
-  .login-container {
-    max-width: 100%;
+  .info-grid {
+    grid-template-columns: 1fr;
   }
 }

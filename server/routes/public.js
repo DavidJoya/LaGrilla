@@ -190,7 +190,7 @@ router.get('/pool/status/:id', async (req, res) => {
   }
 });
 
-// FR-06: Get matchday board (paid entries only) - Show only In_Progress and Finished
+// FR-06: Get matchday board (paid entries only) - UPDATED: Show only In_Progress and Finished
 router.get('/matchday/:id/board', async (req, res) => {
   try {
     const { id } = req.params;

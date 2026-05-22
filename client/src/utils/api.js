@@ -9,6 +9,15 @@ const api = axios.create({
   },
 });
 
+// Interceptor para agregar el token guardado en localStorage automáticamente
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('admin_auth_token');
+  if (token) {
+    config.headers['Authorization'] = `Basic ${token}`;
+  }
+  return config;
+});
+
 // Public API calls
 export const publicAPI = {
   getCurrentMatchday: async () => {
@@ -39,12 +48,46 @@ export const publicAPI = {
 
 // Admin API calls (requires authentication)
 export const adminAPI = {
+  login: async (username, password) => {
+    try {
+      const token = btoa(`${username}:${password}`);
+      
+      // Probar si las credenciales son válidas
+      const response = await api.get('/admin/matchdays', {
+        headers: {
+          'Authorization': `Basic ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        // Guardar token en localStorage
+        localStorage.setItem('admin_auth_token', token);
+        // También configurarlo en axios para peticiones inmediatas
+        api.defaults.headers.common['Authorization'] = `Basic ${token}`;
+        return { success: true };
+      }
+    } catch (error) {
+      return { success: false, error: 'Invalid credentials' };
+    }
+  },
+
+  logout: () => {
+    localStorage.removeItem('admin_auth_token');
+    delete api.defaults.headers.common['Authorization'];
+  },
+
+  isAuthenticated: () => {
+    return !!localStorage.getItem('admin_auth_token');
+  },
+
   setAuthHeader: (username, password) => {
     const token = btoa(`${username}:${password}`);
+    localStorage.setItem('admin_auth_token', token);
     api.defaults.headers.common['Authorization'] = `Basic ${token}`;
   },
 
   clearAuthHeader: () => {
+    localStorage.removeItem('admin_auth_token');
     delete api.defaults.headers.common['Authorization'];
   },
 

@@ -5,47 +5,42 @@ import './Admin.css';
 
 const Admin = () => {
   const navigate = useNavigate();
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(adminAPI.isAuthenticated());
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
-      // Set auth header
-      adminAPI.setAuthHeader(username, password);
-
-      // Test authentication by fetching matchdays
-      await adminAPI.getMatchdays();
-
-      // If successful, mark as authenticated
-      setAuthenticated(true);
-      localStorage.setItem('admin_auth', 'true');
+      const result = await adminAPI.login(username, password);
+      
+      if (result.success) {
+        setAuthenticated(true);
+        setUsername('');
+        setPassword('');
+      } else {
+        setError('Credenciales inválidas');
+      }
     } catch (err) {
-      setError('Credenciales inválidas');
-      adminAPI.clearAuthHeader();
-      localStorage.removeItem('admin_auth');
+      console.error('Login error:', err);
+      setError('Error al iniciar sesión');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleLogout = () => {
-    adminAPI.clearAuthHeader();
-    localStorage.removeItem('admin_auth');
+    adminAPI.logout();
     setAuthenticated(false);
     setUsername('');
     setPassword('');
-    navigate('/');
+    navigate('/admin');
   };
-
-  // Check if previously authenticated
-  React.useEffect(() => {
-    if (localStorage.getItem('admin_auth') === 'true') {
-      setAuthenticated(true);
-    }
-  }, []);
 
   if (!authenticated) {
     return (
@@ -72,6 +67,7 @@ const Admin = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   className="form-input"
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -84,15 +80,16 @@ const Admin = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="form-input"
                   required
+                  disabled={loading}
                 />
               </div>
 
-              <button type="submit" className="btn-primary btn-large">
-                🔐 Iniciar Sesión
+              <button type="submit" className="btn-primary btn-large" disabled={loading}>
+                {loading ? '⏳ Iniciando...' : '🔐 Iniciar Sesión'}
               </button>
 
               <p className="login-hint">
-                Credenciales por defecto: admin / admin123
+                Credenciales: admin / admin123456
               </p>
             </form>
           </div>
